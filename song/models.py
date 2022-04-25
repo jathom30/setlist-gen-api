@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, Enum
-
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean, Enum
+from sqlalchemy.orm import relationship
 from song.schemas import Feel, SongPlacement, Tempo
 from .database import Base
 
@@ -17,7 +17,8 @@ class Song(Base):
     exclude = Column(Boolean)
     key = Column(String)
     notes = Column(String)
-    user_id = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("User", back_populates="songs")
 
 
 class User(Base):
@@ -27,3 +28,4 @@ class User(Base):
     name = Column(String)
     email = Column(String)
     password = Column(String)
+    songs = relationship('Song', back_populates="user")

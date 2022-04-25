@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from enum import Enum
 
 
@@ -35,13 +35,26 @@ class Song(BaseModel):
     length: int
     is_cover: Optional[bool] = False
     exclude: Optional[bool] = False
-    key: Optional[str] = ''
-    notes: Optional[str] = ''
-    user_id: str
+    key: Optional[str] = None
+    notes: Optional[str] = None
 
 
-# remove user_id from response
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
+
+
+class ShowUser(BaseModel):
+    name: str
+    email: str
+
+    class Config():
+        orm_mode = True
+
+
 class ShowSong(BaseModel):
+    id: int
     name: str
     tempo: Tempo
     feel: Feel
@@ -49,14 +62,18 @@ class ShowSong(BaseModel):
     length: int
     is_cover: Optional[bool] = False
     exclude: Optional[bool] = False
-    key: Optional[str] = ''
-    notes: Optional[str] = ''
+    key: Optional[str] = None
+    notes: Optional[str] = None
+    user: ShowUser
 
     class Config():
         orm_mode = True
 
 
-class User(BaseModel):
-    name: str
-    email: str
+class Login(BaseModel):
+    username: str
     password: str
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
