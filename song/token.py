@@ -5,9 +5,10 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from .schemas import TokenData
+from decouple import config
 
-SECRET_KEY = "a82e316ca7b56f8f7bf97f3768cdb482b1e12d2b41d98df5bb62bb8bc64b26f5"
-ALGORITHM = "HS256"
+SECRET_KEY = config('SECRET_KEY')
+ALGORITHM = config('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
