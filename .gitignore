@@ -1,6 +1,6 @@
 __pychache__/
 *.pyc
-setlist-env/
+/setlist-env
 fastapi-env
 .DS_Store
 .env
