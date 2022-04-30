@@ -1,24 +1,30 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-
-from song.schemas import Song, User
+from song.schemas import Song
 from .. import models
 
 
-def get_all(db: Session):
-    songs = db.query(models.Song).all()
+def get_user_songs(db: Session, user: models.User):
+    userId = user.id
+    if not userId:
+        return []
+    songs = db.query(models.Song).filter(models.Song.user_id == userId)
     return songs
 
 
-def get(id: int, db: Session):
-    song = db.query(models.Song).filter(models.Song.id == id).first()
+def get_all(db: Session, user: models.User):
+    return get_user_songs(db, user).all()
+
+
+def get(id: int, db: Session, user: models.User):
+    song = get_user_songs(db, user).filter(models.Song.id == id).first()
     if not song:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Song not found")
     return song
 
 
-def create(db: Session, request: User):
+def create(db: Session, request: Song, user: models.User):
     new_song = models.Song(
         name=request.name,
         tempo=request.tempo,
@@ -29,7 +35,7 @@ def create(db: Session, request: User):
         exclude=request.exclude,
         key=request.key,
         notes=request.notes,
-        user_id=1,
+        user_id=user.id,
     )
     db.add(new_song)
     db.commit()
@@ -37,8 +43,8 @@ def create(db: Session, request: User):
     return new_song
 
 
-def destroy(db: Session, id: int):
-    song = db.query(models.Song).filter(models.Song.id == id)
+def destroy(db: Session, id: int, user: models.User):
+    song = get_user_songs(db, user).filter(models.Song.id == id)
     if not song.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Song not found")
@@ -48,8 +54,8 @@ def destroy(db: Session, id: int):
     return 'deleted'
 
 
-def update(id: int, request: Song, db: Session):
-    song = db.query(models.Song).filter(models.Song.id == id)
+def update(id: int, request: Song, db: Session, user: models.User):
+    song = get_user_songs(db, user).filter(models.Song.id == id)
     if not song.first():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Song not found")

@@ -64,7 +64,33 @@ class ShowSong(BaseModel):
     exclude: Optional[bool] = False
     key: Optional[str] = None
     notes: Optional[str] = None
-    user: ShowUser
+    # user: ShowUser
+
+    class Config():
+        orm_mode = True
+
+
+class Setlist(BaseModel):
+    name: str
+    song_ids: List[int]
+
+
+class ShowSetlist(BaseModel):
+    id: int
+    name: str
+    song_ids: List[str]
+
+    class Config():
+        orm_mode = True
+
+
+class Parent(BaseModel):
+    name: str
+    setlist_ids: List[int]
+
+
+class ShowParent(Parent):
+    id: int
 
     class Config():
         orm_mode = True

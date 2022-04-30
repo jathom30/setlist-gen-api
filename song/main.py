@@ -1,8 +1,7 @@
 from fastapi import FastAPI
-
 from . import models
 from .database import engine
-from .routers import song, user, authentication
+from .routers import song, user, authentication, setlist, parent_list
 
 apiDescription = """
 Auto-generate setlists
@@ -25,3 +24,5 @@ models.Base.metadata.create_all(engine)
 app.include_router(song.router)
 app.include_router(user.router)
 app.include_router(authentication.router)
+app.include_router(setlist.router)
+app.include_router(parent_list.router)
